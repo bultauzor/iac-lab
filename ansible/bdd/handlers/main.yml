@@ -3,6 +3,6 @@
 # handlers file for bdd
 - name: Restart Postgresql
   become: yes
-  ansible.builtin.service:
+  service:
     name: postgresql@14-main
     state: restarted

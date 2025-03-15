@@ -3,7 +3,7 @@
 # tasks file for bdd
 - name: Install Postgresql
   become: yes
-  ansible.builtin.apt:
+  apt:
     name:
       - postgresql-14
       - acl
@@ -11,12 +11,12 @@
 
 - name: Create group
   become: yes
-  ansible.builtin.group:
+  group:
     name: cytech_grp
 
 - name: Create user
   become: yes
-  ansible.builtin.user:
+  user:
     name: cytech_usr
     group: cytech_grp
     password: $6$Nqhzx3MJY2GKx3tf$G4/sKqo1vEf5orL4crIkDJ9URy0tvyQdP/fj6UFKj9L5MU0JVPZOha5VcL31NP9GrHTYUKJC0XZVIKnNpB0vD0
@@ -40,7 +40,7 @@
 
 - name: Set database listen address
   become: yes
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/postgresql/14/main/postgresql.conf
     line: "listen_addresses = '*'"
     search_string: "listen_addresses = "
@@ -66,7 +66,7 @@
   notify: Restart Postgresql
 
 - name: Copy SQL script
-  ansible.builtin.copy:
+  copy:
     src: ../files/init.sql
     dest: /tmp/init.sql
 
