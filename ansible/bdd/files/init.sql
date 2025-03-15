@@ -1,0 +1,6 @@
+create table if not exists cytech(
+    id serial primary key,
+    name text not null
+);
+
+INSERT INTO cytech (name) VALUES ('Patrick');

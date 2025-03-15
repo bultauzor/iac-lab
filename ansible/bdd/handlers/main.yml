@@ -1,0 +1,8 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for bdd
+- name: Restart Postgresql
+  become: yes
+  ansible.builtin.service:
+    name: postgresql@14-main
+    state: restarted

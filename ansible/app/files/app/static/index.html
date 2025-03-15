@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>App</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    h1 {
+      font-family: 'Noto Sans', 'Roboto', 'sans-serif';
+      font-size: 72px;
+      background: -webkit-linear-gradient(left, #dc8a78, #8839ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .vcenter {
+      display: flex;
+      justify-content: center;
+    }
+
+    .hcenter {
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+<div class="hcenter" style="height: 100vh">
+   <div style="width: 100vw">
+     <div class="vcenter">
+       <h1>Hello <span id="name"></span></h1>
+     </div>
+   </div>
+
+  <script>
+    fetch("/api/users").then(res => res.json()).then(j => {
+      document.getElementById("name").innerText = j[j.length - 1].name
+    })
+  </script>
+</body>
+</html>

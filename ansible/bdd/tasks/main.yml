@@ -1,0 +1,79 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for bdd
+- name: Install Postgresql
+  become: yes
+  ansible.builtin.apt:
+    name:
+      - postgresql-14
+      - acl
+      - python3-psycopg2
+
+- name: Create group
+  become: yes
+  ansible.builtin.group:
+    name: cytech_grp
+
+- name: Create user
+  become: yes
+  ansible.builtin.user:
+    name: cytech_usr
+    group: cytech_grp
+    password: $6$Nqhzx3MJY2GKx3tf$G4/sKqo1vEf5orL4crIkDJ9URy0tvyQdP/fj6UFKj9L5MU0JVPZOha5VcL31NP9GrHTYUKJC0XZVIKnNpB0vD0
+    generate_ssh_key: yes
+    ssh_key_type: ed25519
+    ssh_key_file: .ssh/cytech_usr
+
+- name: Create database role
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: cytech_usr
+    role_attr_flags: SUPERUSER
+
+- name: Init database
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: cytech
+    owner: cytech_usr
+
+- name: Set database listen address
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf
+    line: "listen_addresses = '*'"
+    search_string: "listen_addresses = "
+  notify: Restart Postgresql
+
+#- name: Set database listen address
+#  become: yes
+#  community.postgresql.postgresql_set:
+#    name: listen_addresses
+#    value: "{{ subnet }}"
+#  notify: Restart Postgresql
+
+- name: Set database policy
+  become: yes
+  community.postgresql.postgresql_pg_hba:
+    dest: /etc/postgresql/14/main/pg_hba.conf
+    contype: host
+    users: cytech_usr
+    source: "{{ api_host }}"
+    databases: cytech
+    method: ident
+    create: true
+  notify: Restart Postgresql
+
+- name: Copy SQL script
+  ansible.builtin.copy:
+    src: ../files/init.sql
+    dest: /tmp/init.sql
+
+- name: Run SQL script
+  become: yes
+  become_user: cytech_usr
+  community.postgresql.postgresql_script:
+    login_user: cytech_usr
+    db: cytech
+    path: /tmp/init.sql

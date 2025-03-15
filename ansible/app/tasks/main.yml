@@ -1,0 +1,78 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for app
+- name: Install packages
+  become: yes
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - libpq-dev
+      - acl
+      - oidentd
+
+- name: Create user
+  become: yes
+  ansible.builtin.user:
+    name: cytech_usr
+    password: $6$Nqhzx3MJY2GKx3tf$G4/sKqo1vEf5orL4crIkDJ9URy0tvyQdP/fj6UFKj9L5MU0JVPZOha5VcL31NP9GrHTYUKJC0XZVIKnNpB0vD0
+    generate_ssh_key: yes
+    ssh_key_type: ed25519
+    ssh_key_file: .ssh/cytech_usr
+
+- name: Create app directory
+  become: yes
+  become_user: cytech_usr
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+
+- name: Copy app
+  become: yes
+  become_user: cytech_usr
+  ansible.builtin.copy:
+    src: ../files/app
+    dest: "{{ app_dir }}/.."
+
+- name: Init virtual env and dependencies
+  become: yes
+  become_user: cytech_usr
+  ansible.builtin.pip:
+    chdir: "{{ app_dir }}"
+    requirements: requirements.txt
+    virtualenv: "{{ venv_path }}"
+    virtualenv_command: python3 -m venv
+
+- name: Apply template
+  become: yes
+  ansible.builtin.template:
+    src: ../templates/app.service.j2
+    dest: /etc/systemd/system/app.service
+
+- name: Reload systemd config files
+  become: yes
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Setup service
+  become: yes
+  ansible.builtin.systemd_service:
+    name: app
+    state: restarted
+    enabled: yes
+
+- name: Wait 3 seconds
+  become: yes
+  ansible.builtin.pause:
+    seconds: 3
+
+- name: Do a request on the api
+  ansible.builtin.uri:
+    url: http://localhost:8080/api/users
+    return_content: true
+  register: req_response
+
+- name: Show the response
+  ansible.builtin.debug:
+    var: req_response['json']

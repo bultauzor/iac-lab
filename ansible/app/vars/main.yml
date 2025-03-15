@@ -1,0 +1,5 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for app
+app_dir: /home/cytech_usr/app
+venv_path: /home/cytech_usr/venv

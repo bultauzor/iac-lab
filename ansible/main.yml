@@ -1,0 +1,15 @@
+---
+- name: BDD playbook
+  hosts: bdd
+  gather_facts: no
+
+  roles:
+    - bdd
+
+
+- name: App playbook
+  hosts: app
+  gather_facts: no
+
+  roles:
+    - app
