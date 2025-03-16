@@ -65,7 +65,7 @@
 
 - name: Do a request on the api
   uri:
-    url: http://localhost:8080/api/users
+    url: "http://localhost:{{ app_port }}/api/users"
     return_content: true
   register: req_response
 

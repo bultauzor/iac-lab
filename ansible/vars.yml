@@ -1,0 +1,6 @@
+---
+user: cytech_usr # Account user
+group: cytech_grp # Account group
+bdd: cytech # Database name
+name: Alban # Your name
+port: 8080 # Port of the web server

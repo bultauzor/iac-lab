@@ -1,0 +1,44 @@
+---
+- name: Common playbook
+  hosts: bdd, app
+  gather_facts: no
+  vars:
+    update_apt_cache: no
+
+  tasks:
+    - name: Update APT cache
+      become: yes
+      apt:
+        update_cache: yes
+      when: "update_apt_cache"
+
+- name: BDD playbook
+  hosts: bdd
+  gather_facts: no
+  vars_files:
+    - ../vars.yml
+
+  roles:
+    - role: roles/bdd
+      vars:
+        bdd_user: "{{ user }}"
+        bdd_group: "{{ group }}"
+        bdd_db: "{{ bdd }}"
+        bdd_api_host: "{{ hostvars['host-app']['ansible_host'] }}/32"
+        bdd_name: "{{ name }}"
+
+- name: App playbook
+  hosts: app
+  gather_facts: no
+  vars:
+    update_apt_cache: no
+  vars_files:
+    - ../vars.yml
+
+  roles:
+    - role: roles/app
+      vars:
+        app_user: "{{ user }}"
+        app_bdd_host: "{{ hostvars['host-bdd']['ansible_host'] }}"
+        app_bdd_db: "{{ bdd }}"
+        app_port: "{{ port }}"
