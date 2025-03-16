@@ -60,13 +60,6 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config_app" {
         ssh_authorized_keys:
           - ${trimspace(data.local_file.ssh_public_key.content)}
         sudo: ALL=(ALL) NOPASSWD:ALL
-    runcmd:
-        - apt update
-        - apt install -y qemu-guest-agent net-tools
-        - timedatectl set-timezone Europe/Paris
-        - systemctl enable qemu-guest-agent
-        - systemctl start qemu-guest-agent
-        - echo "done" > /tmp/cloud-config.done
     EOF
 
     file_name = "user-data-cloud-config-${var.instance_name}.yaml"

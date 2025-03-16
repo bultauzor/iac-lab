@@ -1,0 +1,27 @@
+---
+- name: Terraform playbook
+  hosts: app, bdd
+  gather_facts: no
+
+  tasks:
+    - name: Wait for SSH
+      wait_for:
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        port: 22
+        delay: 0
+        timeout: 120
+      connection: local
+      vars:
+        ansible_connection: local
+
+    - name: Update APT cache
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Set timezone to Europe/Paris
+      become: true
+      community.general.timezone:
+        name: Europe/Paris
+
+- import_playbook: main.yml
