@@ -1,4 +1,8 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for bdd
-api_host: 192.168.100.142/32
+bdd_user: cytech_usr
+bdd_group: cytech_grp
+bdd_db: cytech
+bdd_api_host: 192.168.100.142/32
+bdd_name: Alban

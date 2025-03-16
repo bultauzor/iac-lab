@@ -1,5 +1,9 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for app
-app_dir: /home/cytech_usr/app
-venv_path: /home/cytech_usr/venv
+app_user: cytech_usr
+app_app_dir: "/home/{{ app_user }}/app"
+app_venv_path: "/home/{{ app_user }}/venv"
+app_port: 8080
+app_bdd_host: 192.168.100.143
+app_bdd_db: cytech

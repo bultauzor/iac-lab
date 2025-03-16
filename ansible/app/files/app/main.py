@@ -1,3 +1,4 @@
+import os
 import psycopg2
 from fastapi import FastAPI, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
@@ -10,7 +11,7 @@ from starlette.responses import FileResponse
 app = FastAPI()
 
 db = psycopg2.connect(
-    dbname="cytech", host="192.168.100.143"
+    dbname=os.environ['DB'], host=os.environ['DB_HOST']
 )
 
 

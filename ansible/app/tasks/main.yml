@@ -15,33 +15,29 @@
 - name: Create user
   become: yes
   user:
-    name: cytech_usr
-    password: $6$Nqhzx3MJY2GKx3tf$G4/sKqo1vEf5orL4crIkDJ9URy0tvyQdP/fj6UFKj9L5MU0JVPZOha5VcL31NP9GrHTYUKJC0XZVIKnNpB0vD0
-    generate_ssh_key: yes
-    ssh_key_type: ed25519
-    ssh_key_file: .ssh/cytech_usr
+    name: "{{ app_user }}"
 
 - name: Create app directory
   become: yes
-  become_user: cytech_usr
+  become_user: "{{ app_user }}"
   file:
-    path: "{{ app_dir }}"
+    path: "{{ app_app_dir }}"
     state: directory
 
 - name: Copy app
   become: yes
-  become_user: cytech_usr
+  become_user: "{{ app_user }}"
   copy:
     src: ../files/app
-    dest: "{{ app_dir }}/.."
+    dest: "{{ app_app_dir }}/.."
 
 - name: Init virtual env and dependencies
   become: yes
-  become_user: cytech_usr
+  become_user: "{{ app_user }}"
   pip:
-    chdir: "{{ app_dir }}"
+    chdir: "{{ app_app_dir }}"
     requirements: requirements.txt
-    virtualenv: "{{ venv_path }}"
+    virtualenv: "{{ app_venv_path }}"
     virtualenv_command: python3 -m venv
 
 - name: Apply template
